@@ -19,7 +19,11 @@ JSONP = (options) ->
 
     window[callback] = (data) ->
         params.success data
-        delete window[callback]
+        try 
+            delete window[callback]
+        catch e 
+            window[callback] = undefined
+        return window[callback]
 
     script = createElement 'script'
     script.src = params.url
@@ -48,7 +52,7 @@ random_string = (length) ->
 
 object_to_uri = (obj) ->
     data = []
-    data.push encode(key) + '=' + encode value for key, value of obj
+    data.push encode(key) + '=' + encode value for own key, value of obj
     return data.join '&'
 
 if module? and module.exports then module.exports = JSONP

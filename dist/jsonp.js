@@ -1,5 +1,6 @@
 (function() {
-  var JSONP, createElement, encode, noop, object_to_uri, random, random_string;
+  var JSONP, createElement, encode, noop, object_to_uri, random, random_string,
+    __hasProp = {}.hasOwnProperty;
 
   createElement = function(tag) {
     return window.document.createElement(tag);
@@ -24,8 +25,15 @@
     done = false;
     callback = params.data[options.callback_name || 'callback'] = 'jsonp_' + random_string(15);
     window[callback] = function(data) {
+      var e;
       params.success(data);
-      return delete window[callback];
+      try {
+        delete window[callback];
+      } catch (_error) {
+        e = _error;
+        window[callback] = void 0;
+      }
+      return window[callback];
     };
     script = createElement('script');
     script.src = params.url;
@@ -68,6 +76,7 @@
     var data, key, value;
     data = [];
     for (key in obj) {
+      if (!__hasProp.call(obj, key)) continue;
       value = obj[key];
       data.push(encode(key) + '=' + encode(value));
     }
